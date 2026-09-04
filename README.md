@@ -8,7 +8,7 @@ A browser-based tool that converts plain English descriptions into working SQL q
 
 ## 📸 Screenshot
 
-![SQL Query Builder Screenshot](screenshot.PNG)
+![SQL Query Builder Screenshot](screenshot2.PNG)
 
 ---
 
