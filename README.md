@@ -1,75 +1,84 @@
-<<<<<<< HEAD
-# Getting Started with Create React App
+# 🔍 Plain English → SQL Query Builder
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A browser-based tool that converts plain English descriptions into working SQL queries. No need to remember exact syntax — just describe what you want and get a clean, ready-to-use SQL statement instantly.
 
-## Available Scripts
+🌐 **Live:** [daemontargaryen47.github.io/sql-query-builder](https://daemontargaryen47.github.io/sql-query-builder/)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 📸 Screenshot
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+![SQL Query Builder Screenshot](screenshot.PNG)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## ✨ Features
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Natural language to SQL** — describe your query in plain English
+- **Multi-condition WHERE clauses** — combine conditions with AND / OR
+- **Pattern support:**
+  - Top N by column — `top 5 products by sales`
+  - Aggregations — `average price by category`, `total revenue by month`
+  - Comparisons — `price greater than 100`, `age less than 30`
+  - Range — `price between 100 and 500`
+  - Text search — `name contains john`, `email starts with admin`
+  - NULL checks — `email is null`, `phone is not null`
+  - Distinct values — `distinct customer_id`
+  - Monthly aggregates — `monthly revenue`
+  - Simple joins — `join orders and customers on customer_id`
+- **Multi-condition support** — `price greater than 100 and category equals electronics`
+- **Custom table names** — adapts all queries to your actual table
+- **Copy to clipboard** with one click
+- **Query history** — revisit your last 5 generated queries
+- **Example queries** — one-click examples to get started instantly
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🛠️ Built With
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- [React](https://reactjs.org/)
+- [Lucide React](https://lucide.dev/) — icons
+- Regex-based natural language parsing
+- [GitHub Pages](https://pages.github.com/) — hosting
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 🚀 Run Locally
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+git clone https://github.com/DaemonTargaryen47/sql-query-builder.git
+cd sql-query-builder
+npm install
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📦 Deploy to GitHub Pages
 
-## Learn More
+```bash
+npm run deploy
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 💡 How It Works
 
-### Code Splitting
+The app uses regex-based pattern templates to match common analytical phrasing and maps each to a corresponding SQL structure. Multi-condition inputs are split on `AND` / `OR` keywords, each segment is parsed independently, and the resulting clauses are joined into a single `WHERE` statement.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 🔮 Planned Improvements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- HAVING clause support for filtered aggregations
+- Subqueries and nested logic
+- LLM integration for fully flexible natural language understanding
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 👤 Author
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
-# sql-query-builder
-A browser-based tool that converts plain English descriptions into working SQL queries
->>>>>>> 304f559a723df04b74a62e57720865baf9900ac5
+**Chowdhury Aseer Ruthbah**
+[GitHub](https://github.com/DaemonTargaryen47) • [LinkedIn](https://www.linkedin.com/in/chowdhury-aseer-ruthbah-0a9ba9275)
