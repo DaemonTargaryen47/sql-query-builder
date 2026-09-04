@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, Copy, Check, Sparkles, ChevronDown } from 'lucide-react';
+import { Database, Copy, Check, Sparkles } from 'lucide-react';
 
 const ACCENT = '#7c3aed';
 
@@ -26,18 +26,6 @@ const TEMPLATES = [
     build: (m, table) => `SELECT ${m[3]}, SUM(${m[2]}) AS total_${m[2]}\nFROM ${table}\nGROUP BY ${m[3]}\nORDER BY total_${m[2]} DESC;`
   },
   {
-    pattern: /(\w+)\s+greater than\s+(\d+)/i,
-    build: (m, table) => `SELECT *\nFROM ${table}\nWHERE ${m[1]} > ${m[2]};`
-  },
-  {
-    pattern: /(\w+)\s+less than\s+(\d+)/i,
-    build: (m, table) => `SELECT *\nFROM ${table}\nWHERE ${m[1]} < ${m[2]};`
-  },
-  {
-    pattern: /(\w+)\s+equal(s)? to?\s+['"]?(\w+)['"]?/i,
-    build: (m, table) => `SELECT *\nFROM ${table}\nWHERE ${m[1]} = '${m[3]}';`
-  },
-  {
     pattern: /monthly\s+(\w+)/i,
     build: (m, table) => `SELECT DATE_TRUNC('month', order_date) AS month, SUM(${m[1]}) AS total_${m[1]}\nFROM ${table}\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY month;`
   },
@@ -57,9 +45,61 @@ const EXAMPLES = [
   'count orders by region',
   'total revenue by month',
   'price greater than 100',
+  'price greater than 100 and category equals electronics',
+  'age greater than 18 and status equals active',
+  'salary less than 50000 or department equals sales',
+  'name contains john',
+  'price between 100 and 500',
   'distinct customer_id',
   'monthly revenue'
 ];
+
+function parseSingleCondition(text) {
+  const patterns = [
+    { regex: /(\w+)\s+greater than\s+(\d+)/i,                        build: (m) => `${m[1]} > ${m[2]}` },
+    { regex: /(\w+)\s+less than\s+(\d+)/i,                           build: (m) => `${m[1]} < ${m[2]}` },
+    { regex: /(\w+)\s+equal(?:s)?\s+to?\s+['"]?(\w+)['"]?/i,        build: (m) => `${m[1]} = '${m[2]}'` },
+    { regex: /(\w+)\s+not equal(?:s)?\s+to?\s+['"]?(\w+)['"]?/i,    build: (m) => `${m[1]} != '${m[2]}'` },
+    { regex: /(\w+)\s+between\s+(\d+)\s+and\s+(\d+)/i,              build: (m) => `${m[1]} BETWEEN ${m[2]} AND ${m[3]}` },
+    { regex: /(\w+)\s+contains\s+['"]?(\w+)['"]?/i,                  build: (m) => `${m[1]} LIKE '%${m[2]}%'` },
+    { regex: /(\w+)\s+starts with\s+['"]?(\w+)['"]?/i,              build: (m) => `${m[1]} LIKE '${m[2]}%'` },
+    { regex: /(\w+)\s+ends with\s+['"]?(\w+)['"]?/i,                build: (m) => `${m[1]} LIKE '%${m[2]}'` },
+    { regex: /(\w+)\s+is not null/i,                                  build: (m) => `${m[1]} IS NOT NULL` },
+    { regex: /(\w+)\s+is null/i,                                      build: (m) => `${m[1]} IS NULL` },
+  ];
+
+  for (const p of patterns) {
+    const match = text.match(p.regex);
+    if (match) return p.build(match);
+  }
+
+  return null;
+}
+
+function parseMultiCondition(input) {
+  const parts = input.split(/\s+(and|or)\s+/i);
+
+  const clauses = [];
+  const operators = [];
+
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 2 === 0) {
+      const cond = parseSingleCondition(parts[i]);
+      if (cond) clauses.push(cond);
+    } else {
+      operators.push(parts[i].toUpperCase());
+    }
+  }
+
+  if (clauses.length === 0) return null;
+
+  let whereClause = clauses[0];
+  for (let i = 1; i < clauses.length; i++) {
+    whereClause += ` ${operators[i - 1] || 'AND'} ${clauses[i]}`;
+  }
+
+  return whereClause;
+}
 
 function generateSQL(input, table) {
   const cleaned = input.trim();
@@ -72,7 +112,11 @@ function generateSQL(input, table) {
     }
   }
 
-  // fallback: generic SELECT with WHERE-like guess
+  const whereClause = parseMultiCondition(cleaned);
+  if (whereClause) {
+    return `SELECT *\nFROM ${table || 'your_table'}\nWHERE ${whereClause};`;
+  }
+
   const words = cleaned.toLowerCase().split(' ');
   if (words.includes('all') || words.includes('everything')) {
     return `SELECT *\nFROM ${table || 'your_table'};`;
@@ -161,7 +205,7 @@ export default function SQLQueryBuilder() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }}
-            placeholder="e.g. top 5 products by sales"
+            placeholder="e.g. price greater than 100 and category equals electronics"
             rows={2}
             style={{
               width: '100%', padding: '0.8rem 0.9rem', borderRadius: '10px',
@@ -250,7 +294,7 @@ export default function SQLQueryBuilder() {
         )}
 
         <div style={{ marginTop: '2.5rem', fontSize: '0.78rem', color: '#a8a2b8', lineHeight: 1.6 }}>
-          Supports patterns like: top N by column, average/total/count by column, comparisons (greater/less than), distinct values, monthly aggregates, and simple joins. For anything more complex, use the output as a starting point and refine manually.
+          Supports: top N by column, average/total/count by column, comparisons (greater/less than, between, contains, starts/ends with), IS NULL checks, multi-condition WHERE with AND/OR, distinct values, monthly aggregates, and simple joins.
         </div>
       </div>
     </div>
